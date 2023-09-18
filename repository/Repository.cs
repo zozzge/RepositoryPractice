@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace repository
 {
     public class Repository<T> where T: EntityBase
     {
 
-        private AppDbContext dbContext;
+        protected AppDbContext dbContext;
 
         public Repository(AppDbContext _dbContext)
         {
@@ -27,9 +28,22 @@ namespace repository
             return dbContext.Set<T>().Where(e => e.Id == id).FirstOrDefault();
         }
 
-        public DbSet<T> GetDbSet()
+        public IQueryable<T> AsQueryable() 
         {
             return dbContext.Set<T>();
+        }
+
+        public IQueryable<T> WithDetails(params Expression<Func<T, object>>[] entityDelegate)
+        {
+            IQueryable<T> result = dbContext.Set<T>();
+
+            foreach (var entity in entityDelegate)
+            {
+
+                return result.Include(entity);
+            }
+
+            return result;
         }
 
         public IEnumerable<T> ListAll()

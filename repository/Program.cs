@@ -44,11 +44,10 @@ namespace repository
             }
         }
 
-        public void ShowOrderDetails(Repository<Order> orderRepository,Repository<OrderItem> orderItemRepository,Repository<Customer> customerRepository,Repository<Product> productRepository, int orderId)
+        public void ShowOrderDetails(OrderRepository orderRepository,Repository<OrderItem> orderItemRepository,Repository<Customer> customerRepository,Repository<Product> productRepository, int orderId)
         {
             Order order = orderRepository
-                .GetDbSet()
-                .Include(o => o.Items)
+                .WithDetails()
                 .Where(o => o.Id == orderId)
                 .FirstOrDefault();
 
@@ -90,7 +89,8 @@ namespace repository
 
             Repository<Product> productRepository = new Repository<Product>(dbContext);
             Repository<Customer> customerRepository = new Repository<Customer>(dbContext);
-            Repository<Order> orderRepository = new Repository<Order>(dbContext);
+
+            OrderRepository orderRepository = new OrderRepository(dbContext);
             Repository<OrderItem> orderItemRepository = new Repository<OrderItem>(dbContext);
 
             Program program = new Program();
